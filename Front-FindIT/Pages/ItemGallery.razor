@@ -1,17 +1,20 @@
-﻿@page "/ItemGallery"
+﻿@page "/"
 
-<h3>Item Gallery</h3>
-
-<input @bind="searchTerm" @bind:event="oninput" placeholder="Pesquisar itens..." class="form-control" />
-<button @onclick="SearchItems" class="btn btn-primary mt-2">Pesquisar</button>
-
+<h3>Galeria de Itens</h3>
+<div class="d-flex align-items-center">
+    <input @bind="searchTerm" @bind:event="oninput" placeholder="Pesquisar itens..." class="form-control" style="flex-grow: 1; border-color: #34251f;" />
+    <button @onclick="SearchItems" class="btn" style="background-color: #34251f; color: white; margin-left: 1rem">Pesquisar</button>
+</div>
 @if (items != null && items.Any())
 {
     <div class="row mt-3">
         @foreach (var item in items)
         {
             <div class="col-md-4 mb-4">
-                <div class="card shadow-sm" @onclick="() => ShowItemDetails(item.Id)">
+                <div class="card shadow-sm"
+                     @onclick="() => ShowItemDetails(item.Id)"
+                     style="border: 2px solid @((item.Id == selectedItemId) ? "#34251f" : "#ddd");
+                            border-width: @(item.Id == selectedItemId ? "4px" : "2px");">
                     <div class="card-body">
                         <h5 class="card-title">@item.Name</h5>
                         <h6 class="card-subtitle mb-2 text-muted">@item.Category.Name</h6>
@@ -30,7 +33,7 @@
         @foreach (var similarItem in similarItems)
         {
             <div class="col-md-4 mb-4">
-                <div class="card shadow-sm">
+                <div class="card shadow-sm" style="border: 2px solid #ddd;">
                     <div class="card-body">
                         <h5 class="card-title">@similarItem.Name</h5>
                         <h6 class="card-subtitle mb-2 text-muted">@similarItem.Category.Name</h6>
@@ -46,6 +49,7 @@
     private string searchTerm = string.Empty;
     private List<ItemDto> items;
     private List<ItemDto> similarItems;
+    private int selectedItemId;
 
     private async Task SearchItems()
     {
@@ -76,6 +80,8 @@
 
     private async Task ShowItemDetails(int itemId)
     {
+        selectedItemId = itemId; // Atualiza o item selecionado
+
         try
         {
             using var httpClient = new HttpClient();
